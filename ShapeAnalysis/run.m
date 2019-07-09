@@ -8,11 +8,14 @@ s1 = CreateImage(s1);
 %ShowImage(s1)
 
 s1 = CreatePerimeter(s1);
+im = GetImage(s1);
 ShowImage(s1);
-CreateAxes(s1);
-x = GetMajorAxisToPerimeterRatio(s1);
-disp(x);
-clear; 
+s1 = CreateAxes(s1);
+
 %%clc;
+s = regionprops(im,'Centroid',...
+    'MajorAxisLength','MinorAxisLength','Orientation','Circularity');
+
+
 
 
