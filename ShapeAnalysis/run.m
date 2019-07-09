@@ -11,7 +11,7 @@ s1 = CreatePerimeter(s1);
 ShowImage(s1);
 CreateAxes(s1);
 
-
-
+clear; 
+clc;
 
 
