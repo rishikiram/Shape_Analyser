@@ -5,6 +5,7 @@ classdef Shape
     properties
         ShapePixels
         Image
+        MajorAxis = [0,0,0,0];%[x1,y1,x2,y2], coordinates of farthest points on primeter
     end
     
     methods
@@ -57,19 +58,41 @@ classdef Shape
         function obj = CreateAxes(obj)
             %% second method
             p = find(obj.Image);
-            PerimPoints = zeros(size(p,1),2);
+            PerimPoints = zeros(size(p,1),3);%[row,col,(has been compared to all other pixels)truefalse]
             for row=1:1:size(p(:,1), 1)
-                rownum = size(obj.Image(:,1));
-                PerimPoints(row,1) = mod(p(row,1),rownum(1));
-                if PerimPoints(row,1) == 0
-                    PerimPoints(row,1) = 19;
+                numofrows = size(obj.Image(:,1),1);
+                PerimPoints(row,1) = mod(p(row,1),numofrows);
+                if PerimPoints(row,1) == 0 
+                    PerimPoints(row,1) = 19; 
                 end
-                PerimPoints(row,2) = ( ceil( p(row,1)/rownum(1) ) );
+                PerimPoints(row,2) = ( ceil( p(row,1)/numofrows ) );
             end
-            %op = [ mod(p,obj.Image(:,1)), (ceil(p/obj.Image(:,1))) ];
+            maxdist = 0;
+            tic;
+            for pixel1 = 1:1: size(PerimPoints, 1)
+                disp('pixle 1');
+                disp(pixel1);
+                for pixel2 = 1:1: size(PerimPoints, 1)
+                    disp('pixle 2');
+                    disp(pixel2)
+                    if pixel1~=pixel2 && PerimPoints(pixel1,3) ~= 1 && PerimPoints(pixel1,3) ~= 1
+                        ydist = PerimPoints(pixel1,1) - PerimPoints(pixel2,1);
+                        xdist = PerimPoints(pixel1,2) - PerimPoints(pixel2,2);
+                        
+                        if sqrt((ydist*ydist)+(xdist*xdist)) > maxdist 
+                            maxdist = sqrt((ydist*ydist)+(xdist*xdist));
+                            obj.MajorAxis(1)=PerimPoints(pixel1,2);
+                            obj.MajorAxis(2)=PerimPoints(pixel1,1);
+                            obj.MajorAxis(3)=PerimPoints(pixel2,2);
+                            obj.MajorAxis(4)=PerimPoints(pixel2,1);
+                        end
+                    end
+                end
+                PerimPoints(pixel1,3) = 1; 
+            end
+            toc;
             
-            %Axis = [dist, x1,y1,x2,y2 ];
-            %Axis.dist = 0;
+            
         end
         
         
