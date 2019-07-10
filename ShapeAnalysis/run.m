@@ -4,10 +4,11 @@ Masks = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint
 CurrentMask = Masks(1).ListWithPixels_3D;
 
 s1 = Shape(CurrentMask);
-s1 = CreateImage(s1);
-s1 = CreatePerimeter(s1);
+%s1 = CreateImage(s1);
+%s1 = CreatePerimeter(s1);
 %im = GetImage(s1);
-s1 = CreateAxes(s1);
+%s1 = CreateAxes(s1);
+s1 = AdjustImageToRectangle(s1);
 ShowImage(s1);
 
 %s = regionprops(im,'Centroid', 'MajorAxisLength','MinorAxisLength','Orientation','Circularity');

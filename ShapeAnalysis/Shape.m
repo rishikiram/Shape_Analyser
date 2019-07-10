@@ -1,4 +1,5 @@
 classdef Shape
+    %Rishi Tikare Yang: Judy Cannons Lab, with Paulus Mrass 
     %Shape Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -24,8 +25,7 @@ classdef Shape
             
         end
         function outputImage = GetImage(obj)
-            %METHOD1 Summary of this method goes here
-            %   Detailed explanation goes here
+            %returns created image from mask pixel list
             xRange = max( obj.MaskPixelList(:,1) ) - min( obj.MaskPixelList(:,1) ) + 1;
             yRange = max( obj.MaskPixelList(:,2) ) - min( obj.MaskPixelList(:,2) ) + 1;
             outputImage = zeros( yRange, xRange);
@@ -37,9 +37,13 @@ classdef Shape
             
         end
         function outputRectangle = GetRectangle(obj)
-            %METHOD1 Summary of this method goes here
-            %   Detailed explanation goes here
+            %returns rectangle structure
             outputRectangle = obj.Rectangle;
+            
+        end
+        function outputLongestLine = GetLongestLine(obj)
+            %returns longestline [x1,y1,x2,y2]
+            outputLongestLine = obj.LongestLine;
             
         end
         function LongestLineToPerimeterRatio = GetLongestLineToPerimeterRatio(obj)
@@ -61,25 +65,26 @@ classdef Shape
         
         end
         function ShowImage(obj)
-            %METHOD1 Summary of this method goes here
-            %   Detailed explanation goes here
+            %shows image and rectangle
             if isempty(obj.Image)
                obj = CreateImage(obj);
             end
             
             imshow(obj.Image,'InitialMagnification','fit');
             
+            if ~isempty(obj.Rectangle)
             hold on
             %for i = 1:1:4
                 %line([obj.Rectangle.xcors(i),obj.Rectangle.xcors(i+1)],[obj.Rectangle.ycors(i),obj.Rectangle.ycors(i+1)]);
                 line(obj.Rectangle.xcors,obj.Rectangle.ycors, 'Color', 'red', 'LineWidth', 2);
             %end
             hold off
-            
+            end
             truesize( [500, 500]);
             
         end
         function obj = CreateImage(obj)
+            %creates image from mask pixel list
             xRange = max( obj.MaskPixelList(:,1) ) - min( obj.MaskPixelList(:,1) ) + 1;
             yRange = max( obj.MaskPixelList(:,2) ) - min( obj.MaskPixelList(:,2) ) + 1;
             obj.Image = zeros( yRange, xRange);
@@ -90,38 +95,49 @@ classdef Shape
             end
         
         end
-        function obj = AdjustImage(obj)
-            find(obj.Image)
-            xRange = max( obj.MaskPixelList(:,1) ) - min( obj.MaskPixelList(:,1) ) + 1;
-            yRange = max( obj.MaskPixelList(:,2) ) - min( obj.MaskPixelList(:,2) ) + 1;
+        function obj = AdjustImageToRectangle(obj)
+            %rescales image to show entire rectangle and image
+            if isempty(obj.Rectangle)
+                obj = CreateAxes(obj);
+            end
+            
+            rc = [obj.Rectangle.ycors,obj.Rectangle.xcors];
+            impix = Shape.GetPixelList(obj.Image);
+            pixlist = [rc; impix];
+            
+            xRange = ceil( max( pixlist(:,2) ) - min( pixlist(:,2)) + 1 );
+            yRange = ceil(max( pixlist(:,1) ) - min( pixlist(:,1)) + 1);
             obj.Image = zeros( yRange, xRange);
             
-            for r=1:1:size(obj.MaskPixelList)
-                cor = [ (obj.MaskPixelList(r,1)- min(obj.MaskPixelList(:,1)) +1) , (obj.MaskPixelList(r,2)- min( obj.MaskPixelList(:,2))+1) ];
-                obj.Image(cor(2), cor(1)) = 1;
+            minx = floor( min(pixlist(:,2)) );
+            miny = floor( min(pixlist(:,1)) ); 
+            for r=1:1:size(impix)
+                cor = [ (impix(r,1)- miny +1) , (impix(r,2)- minx+1) ];
+                obj.Image(cor(1), cor(2)) = 1;
+            end
+            for r=1:1:size(rc)
+                cor = [ (rc(r,1)- miny +1) , (rc(r,2)- minx+1) ];
+                obj.Rectangle.xcors(r)=cor(2);
+                obj.Rectangle.ycors(r)=cor(1);
             end
         
         end
         function obj = CreatePerimeter(obj)
-            
+            %creates perimeter, binary image
+            if isempty(obj.Image)
+                obj = CreateImage(obj);
+            end
             obj.ImagePerimeter = bwperim(obj.Image);
             
         end
         function obj = CreateAxes(obj)
             %% Creates a circumscribed rectangle of the smallest area and finds the longest line between points on perimeter of cell
-            %{ 
-            p = find(obj.ImagePerimeter);
-            PerimPoints = zeros(size(p,1),3);%[row,col,(has been compared to all other pixels)truefalse]
-            for row=1:1:size(p(:,1), 1)
-                numofrows = size(obj.ImagePerimeter(:,1),1);
-                PerimPoints(row,1) = mod(p(row,1),numofrows);
-                if PerimPoints(row,1) == 0 
-                    PerimPoints(row,1) = 19; 
-                end
-                PerimPoints(row,2) = ( ceil( p(row,1)/numofrows ) );
+            if isempty(obj.ImagePerimeter)
+                obj = CreatePerimeter(obj);
             end
-            %}
-            PerimPoints = GetPixelList(obj.ImagePerimeter);
+            
+            PerimPoints = Shape.GetPixelList(obj.ImagePerimeter);
+            PerimPoints(:,3) = zeros(size(PerimPoints(:,1),1),1);
             maxdist = 0;
             for pixel1 = 1:1: size(PerimPoints, 1)
                 for pixel2 = 1:1: size(PerimPoints, 1)
@@ -156,7 +172,9 @@ classdef Shape
         
     end
     methods(Static)
-        function Pixels = GetPixelsList(Image)
+        function Pixels = GetPixelList(Image)
+            %take an image and retuns list of [y,x] or [row,column]
+            %coordinates that are true or not zero
             p = find(Image);
             Pixels = zeros(size(p,1),2);%[row,col]
             for row=1:1:size(p(:,1), 1)
