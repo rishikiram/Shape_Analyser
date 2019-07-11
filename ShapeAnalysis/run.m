@@ -9,17 +9,36 @@ s1 = Shape(CurrentMask);
 %im = GetImage(s1);
 %s1 = CreateAxes(s1);
 s1 = AdjustImageToRectangle(s1);
-ShowImage(s1);
+%ShowImage(s1);
+
+s2 = Shape(Masks(2).ListWithPixels_3D);
+s2 = AdjustImageToRectangle(s2);
+%ShowImage(s2);
+
 
 %s = regionprops(im,'Centroid', 'MajorAxisLength','MinorAxisLength','Orientation','Circularity');
+
+Im = GetImage(s1);
+Rect = GetRectangle(s1);
+
+
+%ShapesHandle = figure('Name','Shapes','NumberTitle','off');no need?
+
+MainAxesHandle = axes('YDir', 'reverse','XTick',[],'YTick',[] );
+MainAxesHandle.Position = [0,0,1,1];
+CircularityText = num2str(GetCircularity(s1));
+CircularityTextHandle = text(.7,0.9,['Circularity: ',CircularityText],'Units','normalized','Color','r');
+ImageAxisHandle = axes('YDir', 'reverse','XTick',[],'YTick',[] );
+ImageAxisHandle.Position=[0,0,0.65,1];
+imshow(Im);
+line(Rect.xcors,Rect.ycors, 'Color', 'red', 'LineWidth', 2);
+
+
+
 %{
-rect = GetRectangle(s1);
-ShowImage(s1);
+fig = imshow(Image,'InitialMagnification','fit');
 hold on
-for i = 1:1:4
-line([rect.xcors(i),rect.xcors(i+1)],[rect.ycors(i),rect.ycors(i+1)]);
-end
+line(Rect.xcors,Rect.ycors, 'Color', 'red', 'LineWidth', 2);
 hold off
-%}            
-
-
+truesize( [500, 500]);
+%}

@@ -25,15 +25,8 @@ classdef Shape
             
         end
         function outputImage = GetImage(obj)
-            %returns created image from mask pixel list
-            xRange = max( obj.MaskPixelList(:,1) ) - min( obj.MaskPixelList(:,1) ) + 1;
-            yRange = max( obj.MaskPixelList(:,2) ) - min( obj.MaskPixelList(:,2) ) + 1;
-            outputImage = zeros( yRange, xRange);
-            
-            for r=1:1:size(obj.MaskPixelList)
-                cor = [ (obj.MaskPixelList(r,1)- min(obj.MaskPixelList(:,1)) +1) , (obj.MaskPixelList(r,2)- min( obj.MaskPixelList(:,2))+1) ];
-                outputImage(cor(2), cor(1)) = 1;
-            end
+            %returns current image 
+            outputImage = obj.Image;
             
         end
         function outputRectangle = GetRectangle(obj)
@@ -41,10 +34,25 @@ classdef Shape
             outputRectangle = obj.Rectangle;
             
         end
+        function outputAxes = GetAxesLength(obj)
+            %returns Axes [majorlength,minorlength]
+            outputAxes = obj.Axes;
+            
+        end
         function outputLongestLine = GetLongestLine(obj)
             %returns longestline [x1,y1,x2,y2]
             outputLongestLine = obj.LongestLine;
             
+        end
+        
+        function circularity = GetCircularity(obj)
+            %Circle = 1, Square = 1.27, the less circular the higher the number
+            if isempty(obj.ImagePerimeter)
+                obj = CreatePerimeter(obj);
+            end
+            PerimList = Shape.GetPixelList(obj.ImagePerimeter);
+            circularity = size(PerimList,1).^2/(4*pi*obj.Area);
+        
         end
         function LongestLineToPerimeterRatio = GetLongestLineToPerimeterRatio(obj)
             %return number from 1 to 1.571, 1 being a circle and 1.571
@@ -70,7 +78,7 @@ classdef Shape
                obj = CreateImage(obj);
             end
             
-            imshow(obj.Image,'InitialMagnification','fit');
+            fig = imshow(obj.Image,'InitialMagnification','fit');
             
             if ~isempty(obj.Rectangle)
             hold on
