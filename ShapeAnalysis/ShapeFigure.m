@@ -4,31 +4,42 @@ classdef ShapeFigure
     
     properties
         ShapeList
+        MainAxesHandle
+        MinorAxesHandleList
     end
     
     methods
-        function obj = ShapeFigure(Shape,ShapeList)
+        function obj = ShapeFigure(ShapeList)
             %UNTITLED2 Construct an instance of this class
             %   Detailed explanation goes here
             obj.ShapeList = ShapeList;
-            obj = AddShape(obj,Shape);
         end
         function obj = AddShape(obj,Shape)
             obj.ShapeList = [obj.Shapelist; Shape];
         end
-        function CreateWindow(obj)
-        
-            MainAxesHandle = axes('YDir', 'reverse','XTick',[],'YTick',[] );
-            MainAxesHandle.Position = [0,0,1,1];
-            CircularityText = num2str(GetCircularity(s1));
-            CircularityTextHandle = text(.7,0.9,['Circularity: ',CircularityText],'Units','normalized','Color','r');
-            ImageAxisHandle = axes('YDir', 'reverse','XTick',[],'YTick',[] );
-            ImageAxisHandle.Position=[0,0,0.65,1];
-            imshow(Im);
-            line(Rect.xcors,Rect.ycors, 'Color', 'red', 'LineWidth', 2);
-        
+        function obj = CreateWindow(obj)
+            
+            numrows = floor( sqrt( size( obj.ShapeList, 1)));
+            numcols = ceil(size( obj.ShapeList, 1) / numrows );
+            axisheight = 1/numrows;
+            axislength = 1/numcols;
+            AxesHandleList = cell(size( obj.ShapeList, 1),1);
+            
+            obj.MainAxesHandle = axes('YDir', 'reverse','XTick',[],'YTick',[] );
+            obj.MainAxesHandle.Position = [0,0,1,1];
+            AxesNum = 1;
+            %AxesHandleList(size(obj.ShapeList,1),1) = axes;%dont know how
+            %to create list of axes pointers
+            for c = 1:1:numrows
+                for r=1:1:numcols
+                    AxesHandleList(AxesNum, 1) = axes( 'YDir', 'reverse' );%,'XTick',[],'YTick',[]
+                    AxesHandleList(AxesNum, 1).Position = [axislength*(r-1),axisheight*(c-1),axislength, axisheight];
+                end
+            end
+            obj.MinorAxesHandleList = AxesHandleList;
         end
-        
+        function obj = FillWindow(obj)
+        end
     end
 end
 

@@ -19,10 +19,15 @@ classdef Shape
             %Shape Construct an instance of this class
             %   Needs input of an array of n rows and 2 or more columns,
             %   in [x,y,z] format
+            if nargin > 0
             obj.MaskPixelList = PixelListOfMask;
             obj.Area = size(PixelListOfMask,1);
-            LongestLine = [0,0,0,0];%[x1,y1,x2,y2], coordinates of farthest points on perimeter
-            
+            end
+        end
+        function obj = SetMask(PixelListOfMask)
+            obj.MaskPixelList = PixelListOfMask;
+            obj.Area = size(PixelListOfMask,1);
+
         end
         function outputImage = GetImage(obj)
             %returns current image 
@@ -155,10 +160,11 @@ classdef Shape
                         xdist = PerimPoints(pixel1,2) - PerimPoints(pixel2,2);
                         if sqrt((ydist*ydist)+(xdist*xdist)) > maxdist 
                             maxdist = sqrt((ydist*ydist)+(xdist*xdist));
-                            obj.LongestLine(1)=PerimPoints(pixel1,2);
-                            obj.LongestLine(2)=PerimPoints(pixel1,1);
-                            obj.LongestLine(3)=PerimPoints(pixel2,2);
-                            obj.LongestLine(4)=PerimPoints(pixel2,1);
+                            x1=PerimPoints(pixel1,2);
+                            y1=PerimPoints(pixel1,1);
+                            x2=PerimPoints(pixel2,2);
+                            y2=PerimPoints(pixel2,1);
+                            obj.LongestLine = [x1,y1,x2,y2];
                         end
                     end
                 end
