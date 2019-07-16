@@ -3,7 +3,8 @@ classdef ShapeFigure
     properties
         ShapeList
         MainAxes
-        MinorAxesList
+        ImageAxesList
+        TextAxesList
     end
     
     methods
@@ -25,27 +26,35 @@ classdef ShapeFigure
             axislength = 1/numcols;
             
             AxesList = cell(numrows, numcols);
-            
+            TextAxes = cell(numrows, numcols);
             obj.MainAxes = axes('YDir', 'reverse','XTick',[],'YTick',[] );
             obj.MainAxes.Position = [0,0,1,1];
             for c = 1:numcols
                 for r=1:numrows
-                    AxesList(r, c) = { axes( 'YDir', 'reverse','XTick',[],'YTick',[], 'Color', 'black' ) };
-                    AxesList{r, c}.Position =  [axislength*(c-1),axisheight*(r-1),axislength, axisheight];
+                    AxesList(r, c) = { axes( 'YDir', 'reverse','XTick',[],'YTick',[]) };
+                    AxesList{r, c}.Position =  [axislength*(c-1),axisheight*(r-1)+axisheight*0.1,axislength, axisheight*0.9];
+                    TextAxes(r,c) = { axes('XTick',[],'YTick',[]) };
+                    TextAxes{r, c}.Position =  [axislength*(c-1),axisheight*(r-1),axislength, axisheight*0.1];
                 end
             end
-            obj.MinorAxesList = AxesList;
+            obj.ImageAxesList = AxesList;
+            obj.TextAxesList = TextAxes;
         end
         function FillWindow(obj)
             %fills axes with images and text
             ishape = 1;
-            for c=1:size(obj.MinorAxesList,2)
-                for r=1:size(obj.MinorAxesList,1)
+            for c=1:size(obj.ImageAxesList,2)
+                for r=1:size(obj.ImageAxesList,1)
                     
                     image = GetImage(obj.ShapeList{ishape,1});
-                    imshow(image, 'Parent', obj.MinorAxesList{r,c} );
+                    if(size(image,1)>size(image,2))
+                        %flip array
+                        new = zeros( size(image,2),size(image,1) );
+                        
+                    end
+                    imshow(image, 'Parent', obj.ImageAxesList{r,c} );
                     Rectangle = GetRectangle(obj.ShapeList{ishape,1});
-                    line(Rectangle.xcors,Rectangle.ycors, 'Color', 'red', 'LineWidth', 2,'Parent', obj.MinorAxesList{r,c});
+                    line(Rectangle.xcors,Rectangle.ycors, 'Color', 'red', 'LineWidth', 2,'Parent', obj.ImageAxesList{r,c});
                     ishape = ishape + 1;
                     if ishape > size(obj.ShapeList,1)
                         AC = num2str(ShapeFigure.GetAverageCircularity(obj.ShapeList));
