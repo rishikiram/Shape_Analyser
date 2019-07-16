@@ -1,3 +1,4 @@
+clear;
 load('/Users/rishi/GitHub/ImageSequences_LacticAcid.mat');
 
 Masks = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint(17).CellMasksInEntireZVolume;
@@ -37,17 +38,18 @@ line(Rect.xcors,Rect.ycors, 'Color', 'red', 'LineWidth', 2);
 %}
 
 
-shapes(10,1) = Shape;
+shapes = cell(10,1);
 for i=1:1:10
-    shapes(i,1) = Shape(Masks(i).ListWithPixels_3D);
+    shapes(i,1) ={ Shape(Masks(i).ListWithPixels_3D) };
+    shapes{i,1} = AdjustImageToRectangle(shapes{i,1});
 end
 
 
 
-
+close all;
 f1 = ShapeFigure(shapes);
-%f1 = CreateWindow(f1);
-
+f1 = CreateWindow(f1);
+FillWindow(f1);
 
 
 

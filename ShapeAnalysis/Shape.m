@@ -1,7 +1,7 @@
 classdef Shape
     %Rishi Tikare Yang: Judy Cannons Lab, with Paulus Mrass 
-    %Shape Summary of this class goes here
-    %   Detailed explanation goes here
+    %Takes in mask and creates object to qunatify shape characteristics,
+    %and output image to be visualized
     
     properties
         MaskPixelList%input of from tracking results list of cell mask [x,y,z] 
@@ -29,8 +29,14 @@ classdef Shape
             obj.Area = size(PixelListOfMask,1);
 
         end
+        function outputImage = GetCurrentImage(obj)
+            %returns current image 
+            outputImage = obj.Image;
+            
+        end
         function outputImage = GetImage(obj)
             %returns current image 
+            obj = AdjustImageToRectangle(obj);
             outputImage = obj.Image;
             
         end
