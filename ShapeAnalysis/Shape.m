@@ -7,7 +7,7 @@ classdef Shape
         MaskPixelList%input of from tracking results list of cell mask [x,y,z] 
         Image 
         ImagePerimeter%binary image of perimeter of cell mask
-        LongestLine%[x1,y1,x2,y2], coordinates of farthest points on perimeter
+        LongestLine%[x1,y1;x2,y2], coordinates of farthest points on perimeter
         Area%of cell mask
         Rectangle%[xcors, ycors, area, perimeter]
         Axes%[major length, minor length], taken from sides of the rectangle
@@ -42,16 +42,28 @@ classdef Shape
         end
         function outputRectangle = GetRectangle(obj)
             %returns rectangle structure
+            if isempty(obj.Rectangle)
+                obj = CreateAxes(obj);
+                obj = AdjustImageToRectangle(obj);
+            end
             outputRectangle = obj.Rectangle;
             
         end
         function outputAxes = GetAxesLength(obj)
             %returns Axes [majorlength,minorlength]
+            if isempty(obj.Axes)
+                obj = CreateAxes(obj);
+                obj = AdjustImageToRectangle(obj);
+            end
             outputAxes = obj.Axes;
             
         end
         function outputLongestLine = GetLongestLine(obj)
             %returns longestline [x1,y1,x2,y2]
+            if isempty(obj.LongestLine)
+                obj = CreateAxes(obj);
+                obj = AdjustImageToRectangle(obj);
+            end
             outputLongestLine = obj.LongestLine;
             
         end
@@ -107,11 +119,17 @@ classdef Shape
             xRange = max( obj.MaskPixelList(:,1) ) - min( obj.MaskPixelList(:,1) ) + 1;
             yRange = max( obj.MaskPixelList(:,2) ) - min( obj.MaskPixelList(:,2) ) + 1;
             obj.Image = zeros( yRange, xRange);
-            
+            %{
             for r=1:1:size(obj.MaskPixelList)
                 cor = [ (obj.MaskPixelList(r,1)- min(obj.MaskPixelList(:,1)) +1) , (obj.MaskPixelList(r,2)- min( obj.MaskPixelList(:,2))+1) ];
                 obj.Image(cor(2), cor(1)) = 1;
             end
+            %}
+            for r=1:1:size(obj.MaskPixelList)
+                cor = [ (obj.MaskPixelList(r,1)- min(obj.MaskPixelList(:,1)) +1) , (obj.MaskPixelList(r,2)- min( obj.MaskPixelList(:,2))+1) ];
+                obj.Image(cor(2), cor(1)) = 1;
+            end
+            
         
         end
         function obj = AdjustImageToRectangle(obj)
@@ -120,9 +138,9 @@ classdef Shape
                 obj = CreateAxes(obj);
             end
             
-            rc = [obj.Rectangle.ycors,obj.Rectangle.xcors];
+            RectangleCoordinates = [obj.Rectangle.ycors,obj.Rectangle.xcors];
             impix = Shape.GetPixelList(obj.Image);
-            pixlist = [rc; impix];
+            pixlist = [RectangleCoordinates; impix];
             
             xRange = ceil( max( pixlist(:,2) ) - min( pixlist(:,2)) + 1 );
             yRange = ceil(max( pixlist(:,1) ) - min( pixlist(:,1)) + 1);
@@ -134,11 +152,13 @@ classdef Shape
                 cor = [ (impix(r,1)- miny +1) , (impix(r,2)- minx+1) ];
                 obj.Image(cor(1), cor(2)) = 1;
             end
-            for r=1:1:size(rc)
-                cor = [ (rc(r,1)- miny +1) , (rc(r,2)- minx+1) ];
+            for r=1:1:size(RectangleCoordinates)
+                cor = [ (RectangleCoordinates(r,1)- miny +1) , (RectangleCoordinates(r,2)- minx+1) ];
                 obj.Rectangle.xcors(r)=cor(2);
                 obj.Rectangle.ycors(r)=cor(1);
             end
+            obj.LongestLine = [obj.LongestLine(1,1)-minx+1,obj.LongestLine(1,2)-miny+1;...
+                obj.LongestLine(2,1)-minx+1,obj.LongestLine(2,2)-miny+1];
         
         end
         function obj = CreatePerimeter(obj)
@@ -170,7 +190,7 @@ classdef Shape
                             y1=PerimPoints(pixel1,1);
                             x2=PerimPoints(pixel2,2);
                             y2=PerimPoints(pixel2,1);
-                            obj.LongestLine = [x1,y1,x2,y2];
+                            obj.LongestLine = [x1,y1;x2,y2];
                         end
                     end
                 end

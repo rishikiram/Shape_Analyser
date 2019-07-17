@@ -24,8 +24,9 @@ Masks = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint
 %ShapesHandle = figure('Name','Shapes','NumberTitle','off');no need?
 
 
+
+%Im = GetImage(s1);
 %{
-Im = GetImage(s1);
 Rect = GetRectangle(s1);
 MainAxesHandle = axes('YDir', 'reverse','XTick',[],'YTick',[] );
 MainAxesHandle.Position = [0,0,1,1];
@@ -35,6 +36,11 @@ ImageAxisHandle = axes('YDir', 'reverse','XTick',[],'YTick',[] );
 ImageAxisHandle.Position=[0,0,0.65,1];
 imshow(Im);
 line(Rect.xcors,Rect.ycors, 'Color', 'red', 'LineWidth', 2);
+%}
+%{
+imshow(Im);
+j = imrotate(Im, 90);
+imshow(j);
 %}
 
 
@@ -46,12 +52,43 @@ end
 
 
 
+
+
 close all;
+
 f1 = ShapeFigure(shapes);
 f1 = CreateWindow(f1);
 FillWindow(f1);
 
+%{
+sq1= [1,3;2,2;2,3;2,4;3,1;3,2;3,3;3,4;3,5;4,2;4,3;4,4;5,3];
 
+sq2 = [1,1;1,2;1,3;2,1,;2,2;2,3;3,3;3,2;3,1];
+
+sq3 =[1,1;1,2;1,3;2,1,;2,2;2,3;3,3;3,2;3,1;4,4;4,3;4,2;4,1;1,4;2,4;3,4]; 
+
+r=500;
+c=500;
+num = 1;
+sq4 = zeros(r*c,2);
+for y=1:r
+    for x=1:c
+        sq4(num,:) = [x,y];
+        num=num+1;
+    end
+end
+
+sh1 = Shape(sq1) ;
+sh2 = Shape(sq2) ;
+sh3 = Shape(sq3) ;
+sh4 = Shape(sq4) ;
+sh4 = AdjustImageToRectangle(sh4);
+shapes2 = {sh1;sh2;sh3;sh4};
+
+f2 = ShapeFigure(shapes2);
+f2 = CreateWindow(f2);
+FillWindow(f2);
+%}
 
 
 
