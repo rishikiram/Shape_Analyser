@@ -2,9 +2,10 @@ classdef ShapeFigure
     %Creates figure and axes to display a list of shapes.
     properties
         ShapeList
-        MainAxes
-        ImageAxesList
-        TextAxesList
+        MainAxesHandle
+        ImageAxesHandleList
+        TextAxesHandleList
+        HistogramHandleList
     end
     
     methods
@@ -30,8 +31,10 @@ classdef ShapeFigure
             
             AxesList = cell(numrows, numcols);
             TextAxes = cell(numrows, numcols);
-            obj.MainAxes = axes('XTick',[],'YTick',[] );%'YDir', 'reverse',
-            obj.MainAxes.Position = [0,0,1,1];
+            NumberOfTextLines = 3;%<---change number of text lines here
+            figure1 = figure('Name', 'Cell Data');
+            obj.MainAxesHandle = axes('XTick',[],'YTick',[] );%'YDir', 'reverse',
+            obj.MainAxesHandle.Position = [0,0,1,1];
             for c = 1:numcols
                 for r=1:numrows
                     %{ 
@@ -43,24 +46,24 @@ classdef ShapeFigure
                     %}
                     %fills from top left to bottom right
                     AxesList(r, c) = { axes( 'YDir', 'reverse','XTick',[],'YTick',[]) };
-                    AxesList{r, c}.Position =  [axislength*(c-1),(1-axisheight*r)+axisheight*0.2,axislength, axisheight*0.8];
+                    AxesList{r, c}.Position =  [axislength*(c-1),(1-axisheight*r)+axisheight*NumberOfTextLines/10,axislength, axisheight*(1-NumberOfTextLines/10)];
                     TextAxes(r,c) = { axes('XTick',[],'YTick',[]) };
-                    TextAxes{r, c}.Position =  [axislength*(c-1),(1-axisheight*r),axislength, axisheight*0.2];
+                    TextAxes{r, c}.Position =  [axislength*(c-1),(1-axisheight*r),axislength, axisheight*NumberOfTextLines/10];
                     
                 end
             end
-            obj.ImageAxesList = AxesList;
-            obj.TextAxesList = TextAxes;
+            obj.ImageAxesHandleList = AxesList;
+            obj.TextAxesHandleList = TextAxes;
         end
         function FillWindow(obj)
             %fills axes with images and text
             ishape = 1;
-            for c=1:size(obj.ImageAxesList,2)
-                for r=1:size(obj.ImageAxesList,1)
+            for c=1:size(obj.ImageAxesHandleList,2)
+                for r=1:size(obj.ImageAxesHandleList,1)
                     %%show avergare cicularity
                     if ishape > size(obj.ShapeList,1)
                         AC = num2str(ShapeFigure.GetAverageCircularity(obj.ShapeList));
-                        text(0.05,0.5,['Average Circularity: ', newline AC],'Units','normalized','Color','#A2142F','FontUnits','normalized','FontSize', 0.1, 'Parent', obj.ImageAxesList{r,c});
+                        text(0.05,0.5,['Average Circularity: ', newline AC],'Units','normalized','Color','#A2142F','FontUnits','normalized','FontSize', 0.1, 'Parent', obj.ImageAxesHandleList{r,c});
                         break;
                     end
                     %%show image
@@ -70,32 +73,75 @@ classdef ShapeFigure
                         rotatedimage = imrotate(image,90);
                     end
                     %}
-                    imshow(image, 'Parent', obj.ImageAxesList{r,c} );
+                    imshow(image, 'Parent', obj.ImageAxesHandleList{r,c} );
                     
                     %%draw rectangle
                     Rectangle = GetRectangle(obj.ShapeList{ishape,1});
                     %{
                     if 1==( exist rotatedimage )
-                        line(Rectangle.ycors,Rectangle.xcors, 'Color', 'red', 'LineWidth', 2,'Parent', obj.ImageAxesList{r,c});
+                        line(Rectangle.ycors,Rectangle.xcors, 'Color', 'red', 'LineWidth', 2,'Parent', obj.ImageAxesHandleList{r,c});
                     end
                     %}
-                    line(Rectangle.xcors,Rectangle.ycors, 'Color', '#A2142F', 'LineWidth', 2,'Parent', obj.ImageAxesList{r,c});
+                    line(Rectangle.xcors,Rectangle.ycors, 'Color', '#A2142F', 'LineWidth', 2,'Parent', obj.ImageAxesHandleList{r,c});
                     
                     %%Draw longest line
                     LongestLine = GetLongestLine(obj.ShapeList{ishape,1});
-                    line(LongestLine(:,1),LongestLine(:,2), 'Color', '#77AC30', 'LineWidth', 2,'Parent', obj.ImageAxesList{r,c},'LineStyle','--');
-                    %%display cicularity
+                    line(LongestLine(:,1),LongestLine(:,2), 'Color', '#77AC30', 'LineWidth', 2,'Parent', obj.ImageAxesHandleList{r,c},'LineStyle','--');
+                    %%display stats
+                    
                     Circularity = num2str( GetCircularity(obj.ShapeList{ishape,1}) );
                     ShapeAxes = GetAxesLength(obj.ShapeList{ishape,1}) ;
                     AxesRatio = num2str(ShapeAxes(1)/ShapeAxes(2));
+                    ConcavePercentage = num2str(GetPercentAreaConcave(obj.ShapeList{ishape,1}));
+                    t = ['Circularity: ' Circularity newline 'Axes Ratio: ' AxesRatio newline 'Concave Area %: ' ConcavePercentage];
+                    text(0.05,0.5,t,'Units','normalized','Color','#A2142F','FontUnits','normalized','FontSize', 0.75/3,'Parent', obj.TextAxesHandleList{r,c});
                     
-                    text(0.05,0.5,['Circularity: ' Circularity newline 'Axes Ratio: ' AxesRatio],'Units','normalized','Color','#A2142F','FontUnits','normalized','FontSize', 0.75/2,'Parent', obj.TextAxesList{r,c});
+                    %{
+                    Circularity = num2str( GetCircularity(obj.ShapeList{ishape,1}) );
+                    RP = GetRPCircularity(obj.ShapeList{ishape,1});
+                    RPCirc = num2str(1/RP.Circularity);
+                    text(0.05,0.5,['My Circularity: ' Circularity newline 'RP Circ ' RPCirc],'Units','normalized','Color','#A2142F','FontUnits','normalized','FontSize', 0.75/2,'Parent', obj.TextAxesHandleList{r,c});
+                    %}
                     
                     ishape = ishape + 1;
                     
                     
                 end
             end
+        end
+        function obj = CreateHistogram(obj, variable)
+            VariableList = zeros(size(obj.ShapeList,1),1);
+            
+            switch variable
+                case 'Circularity'
+                    for i = 1:size(obj.ShapeList,1)
+                        VariableList(i,1) = GetCircularity(obj.ShapeList{i,1});
+                    end
+                    rows = size(obj.HistogramHandleList,1); 
+                    obj.HistogramHandleList{rows+1,1}.figure = figure('Name', [variable ' Histogram'] );
+                    obj.HistogramHandleList{rows+1,1}.axes = axes('XTick',[],'YTick',[] );
+                    obj.HistogramHandleList{rows+1,1}.hiastogram = histogram(VariableList );
+                case 'PercentAreaConcave'
+                    for i = 1:size(obj.ShapeList,1)
+                        VariableList(i,1) = GetPercentAreaConcave(obj.ShapeList{i,1});
+                    end
+                    rows = size(obj.HistogramHandleList,1); 
+                    obj.HistogramHandleList{rows+1,1}.figure = figure('Name', [variable ' Histogram'] );
+                    obj.HistogramHandleList{rows+1,1}.axes = axes('XTick',[],'YTick',[] );
+                    obj.HistogramHandleList{rows+1,1}.hiastogram = histogram(VariableList );
+                case 'AxesRatio'
+                    for i = 1:size(obj.ShapeList,1)
+                        ShapeAxes = GetAxesLength(obj.ShapeList{i,1}) ;
+                        VariableList(i,1) = ShapeAxes(1)/ShapeAxes(2);
+                    end
+                    rows = size(obj.HistogramHandleList,1); 
+                    obj.HistogramHandleList{rows+1,1}.figure = figure('Name', [variable ' Histogram'] );
+                    obj.HistogramHandleList{rows+1,1}.axes = axes('XTick',[],'YTick',[] );
+                    obj.HistogramHandleList{rows+1,1}.hiastogram = histogram(VariableList );
+                otherwise
+                    disp('Invalid variable input for Histogram');
+            end
+        
         end
         
     end

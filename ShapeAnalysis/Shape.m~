@@ -93,8 +93,8 @@ classdef Shape
             if isempty(obj.Image)
                 obj = CreateImage(obj);
             end
-            stat = regionprops(obj.Image, 'ConvexArea');
-            percent = 100*(stat.ConvexArea-obj.Area)/obj.Area;
+            stat = regionprops(obj.Image, 'ConArea');
+            percent = 100*(stat.ConcaveArea-obj.Area)/obj.Area;
         end
         function LongestLineToPerimeterRatio = GetLongestLineToPerimeterRatio(obj)
             %return number from 1 to 1.571, 1 being a circle and 1.571
@@ -225,6 +225,8 @@ classdef Shape
             obj.Axes = [max(l1,l2), min(l1,l2)];
 
         end
+        
+        
         
         
     end

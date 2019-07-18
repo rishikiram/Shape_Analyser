@@ -1,30 +1,32 @@
 clear;
 load('/Users/rishi/GitHub/ImageSequences_LacticAcid.mat');
 
-Masks = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint(17).CellMasksInEntireZVolume;
-%CurrentMask = Masks(1).ListWithPixels_3D;
+%Masks = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint(17).CellMasksInEntireZVolume;
+TimePoint = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint;
+Frames = [];
+%for i = 1:30
+%Frames{i,:} = TimePoint(i).CellMasksInEntireZVolume.ListWithPixels_3D(:,:);
+%end
+x = cell(23);
+x = TimePoint(1).CellMasksInEntireZVolume.ListWithPixels_3D;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%{
+CurrentMask = Masks(1).ListWithPixels_3D;
+s1 = Shape(CurrentMask);
+s1 = CreateImage(s1);
+s1 = CreatePerimeter(s1);
+im = GetImage(s1);
+s1 = CreateAxes(s1);
+s1 = AdjustImageToRectangle(s1);
+ShowImage(s1);
 
-%s1 = Shape(CurrentMask);
-%s1 = CreateImage(s1);
-%s1 = CreatePerimeter(s1);
-%im = GetImage(s1);
-%s1 = CreateAxes(s1);
-%s1 = AdjustImageToRectangle(s1);
-%ShowImage(s1);
-
-%s2 = Shape(Masks(2).ListWithPixels_3D);
-%s2 = AdjustImageToRectangle(s2);
-%ShowImage(s2);
-
-
-%s = regionprops(im,'Centroid', 'MajorAxisLength','MinorAxisLength','Orientation','Circularity');
-
-
+s2 = Shape(Masks(2).ListWithPixels_3D);
+s2 = AdjustImageToRectangle(s2);
+ShowImage(s2);
+%}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %ShapesHandle = figure('Name','Shapes','NumberTitle','off');no need?
-
-
-
 %Im = GetImage(s1);
 %{
 Rect = GetRectangle(s1);
@@ -42,16 +44,15 @@ imshow(Im);
 j = imrotate(Im, 90);
 imshow(j);
 %}
-
-
-shapes = cell(10,1);
-for i=1:1:10
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%{
+masknum = 23;
+%framenum
+shapes = cell(masknum,1);
+for i=1:masknum
     shapes(i,1) ={ Shape(Masks(i).ListWithPixels_3D) };
     shapes{i,1} = AdjustImageToRectangle(shapes{i,1});
 end
-
-
-
 
 
 close all;
@@ -59,7 +60,12 @@ close all;
 f1 = ShapeFigure(shapes);
 f1 = CreateWindow(f1);
 FillWindow(f1);
+f1 = CreateHistogram(f1, 'Circularity');
+f1 = CreateHistogram(f1, 'AxesRatio');
+f1 = CreateHistogram(f1, 'PercentAreaConcave');
+%}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %{
 sq1= [1,3;2,2;2,3;2,4;3,1;3,2;3,3;3,4;3,5;4,2;4,3;4,4;5,3];
 
@@ -67,8 +73,8 @@ sq2 = [1,1;1,2;1,3;2,1,;2,2;2,3;3,3;3,2;3,1];
 
 sq3 =[1,1;1,2;1,3;2,1,;2,2;2,3;3,3;3,2;3,1;4,4;4,3;4,2;4,1;1,4;2,4;3,4]; 
 
-r=500;
-c=500;
+r=200;
+c=200;
 num = 1;
 sq4 = zeros(r*c,2);
 for y=1:r
