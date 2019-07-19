@@ -1,6 +1,6 @@
 clear;
 load('/Users/rishi/GitHub/ImageSequences_LacticAcid.mat');
-disp('Hello World');
+disp('Hello wolrd');
 Masks = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint(17).CellMasksInEntireZVolume;
 TimePoint = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint;
 %MasksAtFrame = [];%[frame,trackID, mask]
