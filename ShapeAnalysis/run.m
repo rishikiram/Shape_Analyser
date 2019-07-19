@@ -1,14 +1,16 @@
 clear;
 load('/Users/rishi/GitHub/ImageSequences_LacticAcid.mat');
 
-%Masks = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint(17).CellMasksInEntireZVolume;
+Masks = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint(17).CellMasksInEntireZVolume;
 TimePoint = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint;
-Frames = [];
+%MasksAtFrame = [];%[frame,trackID, mask]
 %for i = 1:30
-%Frames{i,:} = TimePoint(i).CellMasksInEntireZVolume.ListWithPixels_3D(:,:);
+%    MasksAtFrame(i) = TimePoint(i).CellMasksInEntireZVolume.ListWithPixels_3D(:,:);
 %end
-x = cell(23);
-x = TimePoint(1).CellMasksInEntireZVolume.ListWithPixels_3D;
+
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %{
 CurrentMask = Masks(1).ListWithPixels_3D;

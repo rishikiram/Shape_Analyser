@@ -63,7 +63,12 @@ classdef ShapeFigure
                     %%show avergare cicularity
                     if ishape > size(obj.ShapeList,1)
                         AC = num2str(ShapeFigure.GetAverageCircularity(obj.ShapeList));
-                        text(0.05,0.5,['Average Circularity: ', newline AC],'Units','normalized','Color','#A2142F','FontUnits','normalized','FontSize', 0.1, 'Parent', obj.ImageAxesHandleList{r,c});
+                        text(0.05,0.5,['Average Circularity: ', newline AC],...
+                            'Units','normalized',...
+                            'Color','k',...
+                            'FontUnits','normalized',...
+                            'FontSize', 0.1,...
+                            'Parent', obj.ImageAxesHandleList{r,c});
                         break;
                     end
                     %%show image
@@ -82,11 +87,18 @@ classdef ShapeFigure
                         line(Rectangle.ycors,Rectangle.xcors, 'Color', 'red', 'LineWidth', 2,'Parent', obj.ImageAxesHandleList{r,c});
                     end
                     %}
-                    line(Rectangle.xcors,Rectangle.ycors, 'Color', '#A2142F', 'LineWidth', 2,'Parent', obj.ImageAxesHandleList{r,c});
+                    line(Rectangle.xcors,Rectangle.ycors,...
+                        'Color', '#EDB120',...
+                        'LineWidth', 2,...
+                        'Parent', obj.ImageAxesHandleList{r,c});
                     
                     %%Draw longest line
                     LongestLine = GetLongestLine(obj.ShapeList{ishape,1});
-                    line(LongestLine(:,1),LongestLine(:,2), 'Color', '#77AC30', 'LineWidth', 2,'Parent', obj.ImageAxesHandleList{r,c},'LineStyle','--');
+                    line(LongestLine(:,1),LongestLine(:,2),...
+                        'Color', '#77AC30',...
+                        'LineWidth', 2,...
+                        'Parent', obj.ImageAxesHandleList{r,c},...
+                        'LineStyle','--');
                     %%display stats
                     
                     Circularity = num2str( GetCircularity(obj.ShapeList{ishape,1}) );
@@ -94,7 +106,12 @@ classdef ShapeFigure
                     AxesRatio = num2str(ShapeAxes(1)/ShapeAxes(2));
                     ConcavePercentage = num2str(GetPercentAreaConcave(obj.ShapeList{ishape,1}));
                     t = ['Circularity: ' Circularity newline 'Axes Ratio: ' AxesRatio newline 'Concave Area %: ' ConcavePercentage];
-                    text(0.05,0.5,t,'Units','normalized','Color','#A2142F','FontUnits','normalized','FontSize', 0.75/3,'Parent', obj.TextAxesHandleList{r,c});
+                    text(0.05,0.5,t,...
+                        'Units','normalized',...
+                        'Color','k',...
+                        'FontUnits','normalized',...
+                        'FontSize', 0.75/3,...
+                        'Parent', obj.TextAxesHandleList{r,c});
                     
                     %{
                     Circularity = num2str( GetCircularity(obj.ShapeList{ishape,1}) );
@@ -142,6 +159,8 @@ classdef ShapeFigure
                     disp('Invalid variable input for Histogram');
             end
         
+        end
+        function obj = CreateScatterPlot(shapelist)
         end
         
     end
