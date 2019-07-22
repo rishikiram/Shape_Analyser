@@ -1,6 +1,5 @@
 clear;
 load('/Users/rishi/GitHub/ImageSequences_LacticAcid.mat');
-disp('Hello wolrd');
 Masks = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint(17).CellMasksInEntireZVolume;
 TimePoint = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint;
 %MasksAtFrame = [];%[frame,trackID, mask]
@@ -8,7 +7,8 @@ TimePoint = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimeP
 %    MasksAtFrame(i) = TimePoint(i).CellMasksInEntireZVolume.ListWithPixels_3D(:,:);
 %end
 
-
+m1 = MotilityAnalyzer(TimePoint);
+m1 = CreateCentroidList(m1);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
