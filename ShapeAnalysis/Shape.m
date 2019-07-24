@@ -144,10 +144,12 @@ classdef Shape
                 obj.Image(cor(2), cor(1)) = 1;
             end
             %}
+            
             for r=1:1:size(obj.MaskPixelList)
                 cor = [ (obj.MaskPixelList(r,1)- min(obj.MaskPixelList(:,1)) +1) , (obj.MaskPixelList(r,2)- min( obj.MaskPixelList(:,2))+1) ];
                 obj.Image(cor(2), cor(1)) = 1;
             end
+            
             
         
         end

@@ -19,7 +19,7 @@ classdef MotilityAnalyzer
         function obj = CreateCentroidList(obj)
             for i = 1: size(obj.Timepoint)
                 Masks = obj.Timepoint(i).CellMasksInEntireZVolume;
-                x = Masks
+                x = {Masks.TrackID};
             end
         end
         function obj = CreateVelocityList(obj)
