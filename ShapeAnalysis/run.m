@@ -1,7 +1,7 @@
 clear;
-load('/Users/rishi/GitHub/ImageSequences_LacticAcid.mat');
-Masks = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint(17).CellMasksInEntireZVolume;
-TimePoint = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint;
+load('/Users/rishi/Documents/MATLAB/ImageSequences_LacticAcid.mat');
+%Masks = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint(17).CellMasksInEntireZVolume;
+%TimePoint = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint;
 %MasksAtFrame = [];%[frame,trackID, mask]
 %for i = 1:30
 %    MasksAtFrame(i) = TimePoint(i).CellMasksInEntireZVolume.ListWithPixels_3D(:,:);
