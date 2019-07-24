@@ -6,6 +6,7 @@ classdef MotilityAnalyzer
         VelocityList
         CentroidList
         MaskList
+        ShapeList
     end
     
     methods
@@ -23,6 +24,9 @@ classdef MotilityAnalyzer
             for i = 1: size(obj.MaskList,1)-1
                obj.VelocityList(i) = MotilityAnalyzer.FindDistanceBetween( obj.CentroidList(i,:),obj.CentroidList(i+1,:) );
             end
+        end
+        function obj = CreateShapeList(obj)
+            
         end
         function obj =  DisplayMasks(obj)
             
