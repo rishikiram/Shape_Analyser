@@ -1,5 +1,17 @@
 clear;
+
+% Determine where your m-file's folder is.
+folder = fileparts(which('/Users/rishi/Documents/MATLAB/ImageTracker')); 
+% Add that folder plus all subfolders to the path.
+addpath(genpath(folder));
 load('/Users/rishi/Documents/MATLAB/ImageSequences_LacticAcid.mat');
+
+m1 = MaskDataManager(ImagingProject);
+[Masks, Centroids] = GetMaskDataOfCellOverMovie(m1, 4);
+
+a1 = MotilityAnalyzer(Masks, Centroids);
+a1 = CreateVelocityList(a1);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Masks = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint(17).CellMasksInEntireZVolume;
 %TimePoint = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint;
 %MasksAtFrame = [];%[frame,trackID, mask]
@@ -7,8 +19,8 @@ load('/Users/rishi/Documents/MATLAB/ImageSequences_LacticAcid.mat');
 %    MasksAtFrame(i) = TimePoint(i).CellMasksInEntireZVolume.ListWithPixels_3D(:,:);
 %end
 
-m1 = MotilityAnalyzer(TimePoint);
-m1 = CreateCentroidList(m1);
+%m1 = MotilityAnalyzer(TimePoint);
+%m1 = CreateCentroidList(m1);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

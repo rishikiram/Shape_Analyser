@@ -3,38 +3,37 @@ classdef MotilityAnalyzer
     %   Detailed explanation goes here
     
     properties
-        Timepoint
         VelocityList
         CentroidList
         MaskList
     end
     
     methods
-        function obj = MotilityAnalyzer(Results)
+        function obj = MotilityAnalyzer(Masks, Centroids)
             %MotilityAnalyzer Construct an instance of this class
             %   Detailed explanation goes here
-            obj.Timepoint = Results;
+            obj.MaskList = Masks;
+            obj.CentroidList =Centroids;
             
-        end
-        function obj = CreateCentroidList(obj)
-            for i = 1: size(obj.Timepoint)
-                Masks = obj.Timepoint(i).CellMasksInEntireZVolume;
-                x = {Masks.TrackID};
-            end
         end
         function obj = CreateVelocityList(obj)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
-            for i = 1:size(obj.MaskList,1)
-                x1 = TimePoint(i).CentroidX;
-                VelocityList(i) = FindDistanceBetween(x1,y1,x2,y2);
+            obj.VelocityList = zeros( size(obj.MaskList,1)-1, 1);
+            for i = 1: size(obj.MaskList,1)-1
+               obj.VelocityList(i) = MotilityAnalyzer.FindDistanceBetween( obj.CentroidList(i,:),obj.CentroidList(i+1,:) );
             end
         end
-        
+        function obj =  DisplayMasks(obj)
+            
+        end
+        function obj = CreatePlot(obj)
+
+        end
     end
     methods(Static)
-        function dist = FindDistanceBetween(x1,y1,x2,y2)
-            dist = sqrt((x1-x2).^2 + (y1-y2).^2);
+        function dist = FindDistanceBetween(cor1,cor2)
+            dist = sqrt( (cor1(1)-cor2(1)).^2 + (cor1(2)-cor2(2)).^2 + (cor1(3)-cor2(3)).^2);
         end
     end
 end
