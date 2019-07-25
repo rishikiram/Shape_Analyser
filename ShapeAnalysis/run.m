@@ -7,10 +7,13 @@ addpath(genpath(folder));
 load('/Users/rishi/Documents/MATLAB/ImageSequences_LacticAcid.mat');
 
 m1 = MaskDataManager(ImagingProject);
-[Masks, Centroids] = GetMaskDataOfCellOverMovie(m1, 4);
+[Masks, Centroids] = GetMaskDataOfCellOverMovie(m1, 5);
 
 a1 = MotilityAnalyzer(Masks, Centroids);
 a1 = CreateVelocityList(a1);
+a1 = CreateShapeList(a1);
+close all;
+a1 = DisplayMasks(a1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Masks = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint(17).CellMasksInEntireZVolume;
 %TimePoint = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint;

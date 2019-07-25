@@ -44,7 +44,7 @@ classdef ShapeFigure
                     TextAxes(r,c) = { axes('XTick',[],'YTick',[]) };
                     TextAxes{r, c}.Position =  [axislength*(c-1),axisheight*(r-1),axislength, axisheight*0.1];
                     %}
-                    %fills from top left to bottom right
+                    %fills from top left to bottom right by column
                     AxesList(r, c) = { axes( 'YDir', 'reverse','XTick',[],'YTick',[]) };
                     AxesList{r, c}.Position =  [axislength*(c-1),(1-axisheight*r)+axisheight*NumberOfTextLines/10,axislength, axisheight*(1-NumberOfTextLines/10)];
                     TextAxes(r,c) = { axes('XTick',[],'YTick',[]) };
@@ -56,10 +56,11 @@ classdef ShapeFigure
             obj.TextAxesHandleList = TextAxes;
         end
         function FillWindow(obj)
-            %fills axes with images and text
+            %fills axes with images and text, 
+            %left to right then top to bottom
             ishape = 1;
-            for c=1:size(obj.ImageAxesHandleList,2)
-                for r=1:size(obj.ImageAxesHandleList,1)
+            for r=1:size(obj.ImageAxesHandleList,1)
+                for c=1:size(obj.ImageAxesHandleList,2)
                     %%show avergare cicularity
                     if ishape > size(obj.ShapeList,1)
                         AC = num2str(ShapeFigure.GetAverageCircularity(obj.ShapeList));
@@ -161,6 +162,9 @@ classdef ShapeFigure
         
         end
         function obj = CreateScatterPlot(shapelist)
+        end
+        function obj = CreatePlot
+        
         end
         
     end

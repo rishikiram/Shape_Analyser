@@ -22,6 +22,7 @@ classdef Shape
             if nargin > 0
             obj.MaskPixelList = PixelListOfMask;
             obj.Area = size(PixelListOfMask,1);
+            obj = AdjustImageToRectangle(obj);
             end
         end
         function obj = SetMask(PixelListOfMask)

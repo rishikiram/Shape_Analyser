@@ -7,6 +7,7 @@ classdef MotilityAnalyzer
         CentroidList
         MaskList
         ShapeList
+        Figure
     end
     
     methods
@@ -26,13 +27,21 @@ classdef MotilityAnalyzer
             end
         end
         function obj = CreateShapeList(obj)
-            
+            obj.ShapeList = cell(size(obj.MaskList,1),1);
+            for i=1:size(obj.MaskList,1)
+                obj.ShapeList(i,1) ={ Shape(obj.MaskList{i,1}) };
+                %obj.ShapeList{i,1} = AdjustImageToRectangle(obj.ShapeList{i,1});
+            end
         end
+        
         function obj =  DisplayMasks(obj)
+            obj.Figure = ShapeFigure(obj.ShapeList);
+            obj.Figure = CreateWindow(obj.Figure);
+            FillWindow(obj.Figure);
             
         end
         function obj = CreatePlot(obj)
-
+            
         end
     end
     methods(Static)
