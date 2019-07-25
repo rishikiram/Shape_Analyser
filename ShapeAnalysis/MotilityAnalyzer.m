@@ -16,6 +16,7 @@ classdef MotilityAnalyzer
             %   Detailed explanation goes here
             obj.MaskList = Masks;
             obj.CentroidList =Centroids;
+            obj.Figure = ShapeFigure();
             
         end
         function obj = CreateVelocityList(obj)
@@ -35,14 +36,34 @@ classdef MotilityAnalyzer
         end
         
         function obj =  DisplayMasks(obj)
-            obj.Figure = ShapeFigure(obj.ShapeList);
-            obj.Figure = CreateWindow(obj.Figure);
-            FillWindow(obj.Figure);
+            
+            obj.Figure = CreateWindow(obj.Figure, obj.ShapeList);
+            FillWindow(obj.Figure, obj.ShapeList);
             
         end
-        function obj = CreatePlot(obj)
-            
+        function obj = PlotVelocityVs(obj, variable, PreserveVelocityOrShape)
+            if nargin > 2 && isequal(PreserveVelocityOrShape , 'Velocity')
+                
+                AdjustedVelocityList = obj.VelocityList;
+                InitialValue = obj.VelocityList(1,1);
+                for i = 1:size(AdjustedVelocityList, 1)-1
+                    AdjustedVelocityList(i,1) = (AdjustedVelocityList(i,1)+AdjustedVelocityList(i+1,1))/2;
+                end
+                
+                AdjustedVelocityList = [InitialValue ;AdjustedVelocityList];  
+                yVariable = ShapeFigure.CreateVariableList(obj.ShapeList, variable);
+                obj.Figure = CreateScatterPlot(obj.Figure, AdjustedVelocityList, yVariable);
+            else 
+               yVariable = ShapeFigure.CreateVariableList(obj.ShapeList, variable);
+               AdjustedVariableList = zeros(size(obj.VelocityList,1),1);
+               for i=1:size(obj.VelocityList,1)
+                   AdjustedVariableList(i,1) = (yVariable(i,1)+yVariable(i+1,1))/2;
+               end
+               obj.Figure = CreateScatterPlot(obj.Figure, obj.VelocityList, AdjustedVariableList);
+            end
         end
+        
+        
     end
     methods(Static)
         function dist = FindDistanceBetween(cor1,cor2)

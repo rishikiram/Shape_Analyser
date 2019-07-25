@@ -14,6 +14,7 @@ a1 = CreateVelocityList(a1);
 a1 = CreateShapeList(a1);
 close all;
 a1 = DisplayMasks(a1);
+a1 = PlotVelocityVs(a1, 'AxesRatio');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Masks = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint(17).CellMasksInEntireZVolume;
 %TimePoint = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint;
