@@ -42,7 +42,7 @@ classdef MotilityAnalyzer
             
         end
         function obj = PlotVelocityVs(obj, variable, PreserveVelocityOrShape)
-            if nargin > 2 && isequal(PreserveVelocityOrShape , 'Velocity')
+            if nargin > 2 && isequal(PreserveVelocityOrShape , 'Shape')
                 
                 AdjustedVelocityList = obj.VelocityList;
                 InitialValue = obj.VelocityList(1,1);
