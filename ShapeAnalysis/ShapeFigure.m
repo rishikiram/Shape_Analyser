@@ -1,5 +1,7 @@
 classdef ShapeFigure
-    %Creates figure and axes to display a list of shapes.
+    %Author, Rishi Tikare Yang: Judy Cannons Lab, with Paulus Mrass 
+    %Creates figures and axes to display: list of shapes, histogram, plots
+    %Fills Figure/axes with given information
     properties
         MainAxesHandle
         ImageAxesHandleList
@@ -24,9 +26,11 @@ classdef ShapeFigure
             
             AxesList = cell(numrows, numcols);
             TextAxes = cell(numrows, numcols);
-            NumberOfTextLines = 3;%<---change number of text lines here
-            figure1 = figure('Name', 'Cell Data');
-            obj.MainAxesHandle = axes('XTick',[],'YTick',[] );%'YDir', 'reverse',
+            NumberOfTextLines = 3;%<---change number of text lines here, this will adjust normalized size of text 
+            
+            
+            figure1 = figure('Name', 'Cell Data');%Figure handle is not saved, but if needed to, start here
+            obj.MainAxesHandle = axes('XTick',[],'YTick',[] );%<--Those properties make the axes less visible
             obj.MainAxesHandle.Position = [0,0,1,1];
             for c = 1:numcols
                 for r=1:numrows
@@ -50,12 +54,12 @@ classdef ShapeFigure
         end
         function FillWindow(obj, ShapeList)
             %fills axes with images and text, 
-            %left to right then top to bottom
+            %fills left to right, then top to bottom
             ishape = 1;
             for r=1:size(obj.ImageAxesHandleList,1)
                 for c=1:size(obj.ImageAxesHandleList,2)
                     %%show avergare cicularity
-                    if ishape > size(ShapeList,1)
+                    if ishape > size(ShapeList,1)%if all shapes have been displayed
                         AC = num2str(ShapeFigure.GetAverageCircularity(ShapeList));
                         text(0.05,0.5,['Average Circularity: ', newline AC],...
                             'Units','normalized',...
@@ -67,20 +71,10 @@ classdef ShapeFigure
                     end
                     %%show image
                     image = GetImage(ShapeList{ishape,1});
-                    %{
-                    if(size(image,1)>size(image,2))
-                        rotatedimage = imrotate(image,90);
-                    end
-                    %}
                     imshow(image, 'Parent', obj.ImageAxesHandleList{r,c} );
                     
                     %%draw rectangle
                     Rectangle = GetRectangle(ShapeList{ishape,1});
-                    %{
-                    if 1==( exist rotatedimage )
-                        line(Rectangle.ycors,Rectangle.xcors, 'Color', 'red', 'LineWidth', 2,'Parent', obj.ImageAxesHandleList{r,c});
-                    end
-                    %}
                     line(Rectangle.xcors,Rectangle.ycors,...
                         'Color', '#EDB120',...
                         'LineWidth', 2,...
@@ -93,8 +87,8 @@ classdef ShapeFigure
                         'LineWidth', 2,...
                         'Parent', obj.ImageAxesHandleList{r,c},...
                         'LineStyle','--');
-                    %%display stats
                     
+                    %%display stats
                     Circularity = num2str( GetCircularity(ShapeList{ishape,1}) );
                     ShapeAxes = GetAxesLength(ShapeList{ishape,1}) ;
                     AxesRatio = num2str(ShapeAxes(1)/ShapeAxes(2));
@@ -107,13 +101,6 @@ classdef ShapeFigure
                         'FontSize', 0.75/3,...
                         'Parent', obj.TextAxesHandleList{r,c});
                     
-                    %{
-                    Circularity = num2str( GetCircularity(ShapeList{ishape,1}) );
-                    RP = GetRPCircularity(ShapeList{ishape,1});
-                    RPCirc = num2str(1/RP.Circularity);
-                    text(0.05,0.5,['My Circularity: ' Circularity newline 'RP Circ ' RPCirc],'Units','normalized','Color','#A2142F','FontUnits','normalized','FontSize', 0.75/2,'Parent', obj.TextAxesHandleList{r,c});
-                    %}
-                    
                     ishape = ishape + 1;
                     
                     
@@ -121,58 +108,39 @@ classdef ShapeFigure
             end
         end
         function obj = CreateHistogram(obj,ShapeList, variable)
-            VariableList = ShapeFigure.CreateVariableList(ShapeList, variable);
+            %Given List of Shapes, and a variable, creates histogram in new
+            %figure
+            %Data is put into a list with CreateVariableList Function
             
+            VariableList = ShapeFigure.CreateVariableList(ShapeList, variable);
             rows = size(obj.HistogramHandleList,1); 
             obj.HistogramHandleList{rows+1,1}.figure = figure('Name', [variable ' Histogram'] );
             obj.HistogramHandleList{rows+1,1}.axes = axes('XTick',[],'YTick',[] );
             obj.HistogramHandleList{rows+1,1}.histogram = histogram(VariableList );
-            %{
-            switch variable
-                case 'Circularity'
-                    for i = 1:size(ShapeList,1)
-                        VariableList(i,1) = GetCircularity(ShapeList{i,1});
-                    end
-                    rows = size(obj.HistogramHandleList,1); 
-                    obj.HistogramHandleList{rows+1,1}.figure = figure('Name', [variable ' Histogram'] );
-                    obj.HistogramHandleList{rows+1,1}.axes = axes('XTick',[],'YTick',[] );
-                    obj.HistogramHandleList{rows+1,1}.histogram = histogram(VariableList );
-                case 'PercentAreaConcave'
-                    for i = 1:size(ShapeList,1)
-                        VariableList(i,1) = GetPercentAreaConcave(ShapeList{i,1});
-                    end
-                    rows = size(obj.HistogramHandleList,1); 
-                    obj.HistogramHandleList{rows+1,1}.figure = figure('Name', [variable ' Histogram'] );
-                    obj.HistogramHandleList{rows+1,1}.axes = axes('XTick',[],'YTick',[] );
-                    obj.HistogramHandleList{rows+1,1}.histogram = histogram(VariableList );
-                case 'AxesRatio'
-                    for i = 1:size(ShapeList,1)
-                        ShapeAxes = GetAxesLength(ShapeList{i,1}) ;
-                        VariableList(i,1) = ShapeAxes(1)/ShapeAxes(2);
-                    end
-                    rows = size(obj.HistogramHandleList,1); 
-                    obj.HistogramHandleList{rows+1,1}.figure = figure('Name', [variable ' Histogram'] );
-                    obj.HistogramHandleList{rows+1,1}.axes = axes('XTick',[],'YTick',[] );
-                    obj.HistogramHandleList{rows+1,1}.histogram = histogram(VariableList );
-                otherwise
-                    disp('Invalid variable input for Histogram');
-            end
-            %}
+            
         
         end
         function obj = CreateScatterPlot(obj, xVariable, yVariable, ShapeList)
-            %MakeLabels
+            %   Given List of Shapes, and a variable, creates scatter plot in new
+            %figure.
+            %   yVaribale can be either the string of a variable name that 
+            %is known to CreateVariableListor, or can be data ready to plot.
+            %   If yVariable is a string, and only if yVariable is a string,
+            %then the shapelist should be provided as an argument so data
+            %can be retrieved.
+            
+            %MakeAxesLabels
             xString = xVariable;
             yString = yVariable;
             if ~isstring(xString)
-                xString = 'Velocity';
+                xString = 'Speed';
             end
             if ~isstring(yString)
                 yString = 'Variable';
             end
             %Set Up figure and axes
             rows = size(obj.ScatterHandleList,1);
-            obj.ScatterHandleList{rows+1,1}.figure = figure('Name', [yString ' vs ' xString 'Scatter Plot'] );
+            obj.ScatterHandleList{rows+1,1}.figure = figure('Name', [yString ' vs ' xString ' Scatter Plot'] );
             obj.ScatterHandleList{rows+1,1}.axes = axes();
             %Check what to plot
             if nargin == 3
@@ -181,7 +149,7 @@ classdef ShapeFigure
                 yVariable = ShapeFigure.CreateVariableList(ShapeList, yVariable);
                 obj.ScatterHandleList{rows+1,1}.scatter = scatter(xVariable, yVariable, 'filled' );
             end
-            %label
+            %Add Axes Labels 
             obj.ScatterHandleList{rows+1,1}.axes.XLabel.String = xString;
             obj.ScatterHandleList{rows+1,1}.axes.YLabel.String = yString;                                      
         end
@@ -200,6 +168,7 @@ classdef ShapeFigure
             AverageCirculary = totalCircularity/numCircularity;
         end
         function VariableList = CreateVariableList(ShapeList, variable)
+            %creates List of numbers for plot of the given variable
             VariableList = zeros(size(ShapeList,1),1);
             
             switch variable

@@ -1,33 +1,42 @@
 classdef MaskDataManager
-    %UNTITLED Summary of this class goes here
-    %   Detailed explanation goes here
+    %Author, Rishi Tikare Yan: Judy Cannons Lab, with Paulus Mrass
+    %This Class was created to create lists of Cell-Masks for analysis.
+    %Outputs Cell arrays containing Masks, and is originally inteneded to
+    %be used with a PMMovieLibrary file and the output to be fed to
+    %MotilityAnalyzer
     
     properties
         MovieLibrary
-        Movie = 46;
-        Frame = 1;
+        Movie = 46;%46 is just a movie I know had tracks for development
+        Frame = 1; 
     end
     
     methods
         function obj = MaskDataManager(PMMovieLibrary)
-            %UNTITLED Construct an instance of this class
-            %   Detailed explanation goes here
+            %Class requires a PMMovieLibrary
             obj.MovieLibrary = PMMovieLibrary;
         end
         
         function obj = SetMovie(mov)
+            %set current movie
+            %the movie number is for PMMovieLibrary
+            %sets movie to corresponding movie in ListWithMovieObjects 
             obj.Movie = mov;
         end
         function obj = SetFrame(fr)
+            %set current frame
+            %the frame number is for PMMovieLibrary
+            %sets frame to corresponding frame in movie
             obj.Frame = fr;
         end
         function obj = SetMovieLibrary(lib)
+            %set current Library
             obj.MovieLibrary = lib;
         end
         
         function [MaskList,CentroidList] = GetMaskDataOfFrame(obj)
-            %UNTITLED Summary of this function goes here
-            %   Detailed explanation goes here
+            %Returns a cell array of masks and array of Centroids
+            %Gets all masks/centroids of a single frame
             MaskDataAtFrame = obj.MovieLibrary.ListhWithMovieObjects{obj.Movie,1}.Tracking.TrackingCellForTime{obj.Frame,1};
             MaskList = MaskDataAtFrame(:,6);
             yList = cell2mat(MaskDataAtFrame(:,3));
@@ -36,8 +45,9 @@ classdef MaskDataManager
             CentroidList = [xList,yList,zList];
         end
         function [MaskList,CentroidList] = GetMaskDataOfCellOverMovie(obj, CellID)
-            %UNTITLED Summary of this function goes here
-            %   Detailed explanation goes here
+            %Gets all masks/centroids of a single track over an entire movie
+            %Returns a cell array of masks and number array of Centroids
+            
             testrow = MaskDataManager.GetRowOfCell(CellID, obj.Frame, obj.Movie, obj.MovieLibrary);
              if isempty(testrow)
                  MaskList = [];
@@ -60,6 +70,8 @@ classdef MaskDataManager
     end
     methods(Static)
         function row = GetRowOfCell(ID, Frame, Movie, PMMovieLibrary)
+            %returns row of a cell with a certain Track-ID in the 
+            %current-frame of the current-movie
             MaskDataAtFrame = PMMovieLibrary.ListhWithMovieObjects{Movie,1}.Tracking.TrackingCellForTime{Frame,1};
             ar = cell2mat(MaskDataAtFrame(:,1));
             row = find((ar == ID));

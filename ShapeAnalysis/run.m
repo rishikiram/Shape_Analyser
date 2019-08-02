@@ -1,3 +1,5 @@
+%Author, Rishi Tikare Yang: Judy Cannons Lab, with Paulus Mrass 
+
 clear;
 
 % Determine where your m-file's folder is.
@@ -10,11 +12,13 @@ m1 = MaskDataManager(ImagingProject);
 [Masks, Centroids] = GetMaskDataOfCellOverMovie(m1, 5);
 
 a1 = MotilityAnalyzer(Masks, Centroids);
-a1 = CreateVelocityList(a1);
+a1 = CreateSpeedList(a1);
 a1 = CreateShapeList(a1);
 close all;
-a1 = DisplayMasks(a1);
-a1 = PlotVelocityVs(a1, 'AxesRatio');
+a1 = DisplayShapes(a1);
+a1 = PlotSpeedVs(a1, 'AxesRatio');
+a1 = PlotSpeedVs(a1, 'Circularity');
+a1 = PlotSpeedVs(a1, 'PercentAreaConcave');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Masks = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint(17).CellMasksInEntireZVolume;
 %TimePoint = ImagingProject.ListWithMovies(51).TrackingResults.Segmentation.TimePoint;

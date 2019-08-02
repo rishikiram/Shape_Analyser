@@ -1,5 +1,5 @@
 classdef Shape
-    %Rishi Tikare Yang: Judy Cannons Lab, with Paulus Mrass 
+    %Author, Rishi Tikare Yang: Judy Cannons Lab, with Paulus Mrass 
     %Takes in mask and creates object to qunatify shape characteristics,
     %and output image to be visualized
     
@@ -16,13 +16,14 @@ classdef Shape
     methods
         
         function obj = Shape(PixelListOfMask)
-            %Shape Construct an instance of this class
             %   Needs input of an array of n rows and 2 or more columns,
-            %   in [x,y,z] format
+            %in [x,y,z] format.
+            %   It is possible that the PMMovieLibrary stores masks in [y,x,z]
+            %format, meaning this class has x and y switched.
             if nargin > 0
             obj.MaskPixelList = PixelListOfMask;
             obj.Area = size(PixelListOfMask,1);
-            obj = AdjustImageToRectangle(obj);
+            obj = CreateAllStatistics(obj);
             end
         end
         function obj = SetMask(PixelListOfMask)
@@ -154,8 +155,14 @@ classdef Shape
             
         
         end
+        function obj = CreateAllStatistics(obj)
+            %this function starts a chain reaction of checking and running
+            %required methods to create all statistics
+            obj = AdjustImageToRectangle(obj);
+        end
         function obj = AdjustImageToRectangle(obj)
             %rescales image to show entire rectangle and image
+            %all other statistics will be created
             if isempty(obj.Rectangle)
                 obj = CreateAxes(obj);
             end
